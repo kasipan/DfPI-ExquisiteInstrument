@@ -14,7 +14,7 @@ if __name__ == '__main__':
     time.sleep(3)
     while 1:
         gpio_seri.write('get')
-        time.sleep(1)
+        time.sleep(0.2)
         data = gpio_seri.readline()
         print(data)
         sendData(data)
