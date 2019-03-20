@@ -2,7 +2,7 @@
 
 int sensorValue;
 int distance;
-int sensorID = 2;   // 1:center 2:left 3:right
+int sensorID = 2;   // 1:center 2:right 3:left
 int prevDist, prevDist2;
 const int THRESHOLD = 70;
 
@@ -39,6 +39,5 @@ void loop() {
   prevDist2 = prevDist;
   prevDist = distance;
 
-  // Wait some time
   delay(200);
 }

@@ -12,14 +12,14 @@ relation_index = '''
 {
     "personal":{
         "from": 0,
-        "to": 150
+        "to": 120
     },
     "close":{
-        "from": 151,
-        "to": 250
+        "from": 121,
+        "to": 200
     },
    "normal":{
-        "from": 251,
+        "from": 201,
         "to": 300
     },
     "public":{
@@ -33,31 +33,34 @@ relation_dict = json.loads(relation_index)
 
 # Sending data to change robot's behaviour
 def sendData(msg):
-    #sock.sendto(msg.encode('utf8'), sendAddr)
     sock.sendto(str(msg).encode('utf8'), sendAddr)
 
-def saveCSV(relation, time):
-    with open('./data/record.csv', 'a') as f:
+def saveCSV(sensor_id, relation, time):
+    with open('./data/record_{}.csv'.format(sensor_id), 'a') as f:
         f.write('{},{}\n'.format(relation, time))
 
-
-prev_relation = "public"    #initial relation
+#initial relation
+prev_relation={1:'public', 2:'public', 3:'public'}
 start = time.time()
 while True:
     msg, sender = sock.recvfrom(512)
     print('msg: {}, sender: {}'.format(msg, sender))
     if len(msg) is not 0:
-        json_dict = json.loads(msg);
+        json_dict = json.loads(msg)
+        sensor_id = json_dict['sensor']
         distance = json_dict['distance']
-        sendData(distance);
+
+        # only center data is sent
+        # if sensor_id is 1:
+        #     sendData(distance)
 
         # record time in particular distance
         for key, range in relation_dict.items():
             if distance > range['from'] and distance < range['to']:
-                if prev_relation is not key:
+                if prev_relation[sensor_id] is not key:
                     elapsed_time = time.time() - start
-                    saveCSV(prev_relation, elapsed_time)
+                    saveCSV(sensor_id, prev_relation[sensor_id], elapsed_time)
 
                     #couting time for next relation
-                    prev_relation = key
+                    prev_relation[sensor_id] = key
                     start = time.time()
