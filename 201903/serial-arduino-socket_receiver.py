@@ -1,6 +1,8 @@
 import socket
 import json
 import time
+from datetime import datetime
+
 
 sendAddr = ('172.20.10.11', 2391)     # robot's addr
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,7 +39,8 @@ def sendData(msg):
 
 def saveCSV(sensor_id, relation, time):
     with open('./data/record_{}.csv'.format(sensor_id), 'a') as f:
-        f.write('{},{}\n'.format(relation, time))
+        end_time = datetime.now().strftime("%H:%M:%S")
+        f.write('{},{},{}\n'.format(relation, time, end_time))
 
 #initial relation
 prev_relation={1:'public', 2:'public', 3:'public'}
@@ -51,8 +54,8 @@ while True:
         distance = json_dict['distance']
 
         # only center data is sent
-        # if sensor_id is 1:
-        #     sendData(distance)
+        if sensor_id is 1:
+            sendData(distance)
 
         # record time in particular distance
         for key, range in relation_dict.items():
